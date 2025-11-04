@@ -1,18 +1,43 @@
-import { useState } from 'react'
+import {useState} from 'react';
+import styles from './styles.module.css';
 
-import './App.css'
+export default function App() {
+  const [userPrompt, setUserPrompt] = useState('');
+  const [gptQuery, setgptQuery] = useState('');
 
-function App() {
-  const [count, setCount] = useState(0)
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const query = await generateQuery();
+    setgptQuery(query);
+  };
+
+  const generateQuery = async () => {
+    const response = await fetch('http://localhost:3002/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({queryDescription: userPrompt}),
+    });
+
+    const data = await response.json();
+    return data.gptQuery.trim();
+  };
 
   return (
-    <>
-
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <main className={styles.main}>
+      <h3>GPT</h3>
+      <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          name="query-description"
+          placeholder="Describe your query"
+          value={userPrompt}
+          onChange={(e) => setUserPrompt(e.target.value)}
+        />
+        <input type="submit" value="Generate query" />
+      </form>
+      <pre>{gptQuery}</pre>
+    </main>
+  );
 }
-
-export default App
