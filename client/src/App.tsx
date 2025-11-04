@@ -1,17 +1,21 @@
-import {useState} from 'react';
+import {useState, type ChangeEvent, type FormEvent} from 'react';
 import styles from './styles.module.css';
 
-export default function App() {
-  const [userPrompt, setUserPrompt] = useState('');
-  const [gptQuery, setgptQuery] = useState('');
+type GenerateResponse = {
+  gptQuery: string;
+};
 
-  const onSubmit = async (e) => {
+export default function App() {
+  const [userPrompt, setUserPrompt] = useState<string>('');
+  const [gptQuery, setGptQuery] = useState<string>('');
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const query = await generateQuery();
-    setgptQuery(query);
+    setGptQuery(query);
   };
 
-  const generateQuery = async () => {
+  const generateQuery = async (): Promise<string> => {
     const response = await fetch('http://localhost:3002/generate', {
       method: 'POST',
       headers: {
@@ -20,8 +24,12 @@ export default function App() {
       body: JSON.stringify({queryDescription: userPrompt}),
     });
 
-    const data = await response.json();
+    const data: GenerateResponse = await response.json();
     return data.gptQuery.trim();
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setUserPrompt(e.target.value);
   };
 
   return (
@@ -33,7 +41,7 @@ export default function App() {
           name="query-description"
           placeholder="Describe your query"
           value={userPrompt}
-          onChange={(e) => setUserPrompt(e.target.value)}
+          onChange={handleChange}
         />
         <input type="submit" value="Generate query" />
       </form>
