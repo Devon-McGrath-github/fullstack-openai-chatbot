@@ -13,8 +13,10 @@
 
 /* 3. Allow percentage-based heights in the application */
 html,
-body {
+body,
+#root {
   height: 100%;
+  width: 100%;
 }
 
 /* 4. Improve text rendering and font consistency */

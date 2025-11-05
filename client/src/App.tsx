@@ -43,7 +43,7 @@ const AppContent = () => {
 
   return (
     <main>
-      <h3>GPT</h3>
+      <h2>ChatGPT</h2>
       <div
         style={{
           display: 'flex',
