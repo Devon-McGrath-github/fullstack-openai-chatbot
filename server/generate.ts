@@ -1,8 +1,10 @@
 import openai from './api';
 
+// Define the different types of chat roles
 type Role = 'system' | 'user' | 'assistant';
 type ChatMessage = {role: Role; content: string};
 
+// Optional settings you can pass when generating a response
 export type GenerateOptions = {
   model?: string;
   system?: string;
@@ -11,7 +13,7 @@ export type GenerateOptions = {
   signal?: AbortSignal;
 };
 
-// Generate answer from OpenAI.
+// Ask OpenAI for a response based on the user's input
 export default async function generate(
   queryDescription: string,
   {
@@ -23,13 +25,14 @@ export default async function generate(
 ): Promise<string> {
   if (!queryDescription?.trim()) return '';
 
-  // Context for the conversation
+  // Build the message list that OpenAI will use for context
   const messages: ChatMessage[] = [
     {role: 'system', content: system},
     {role: 'user', content: queryDescription.trim()},
   ];
 
   try {
+    // Send the messages to OpenAI and wait for a reply
     const res = await openai.chat.completions.create({
       model,
       messages,
@@ -37,8 +40,10 @@ export default async function generate(
       max_tokens: maxTokens,
     });
 
+    // Return the assistant's reply text, or an empty string if none
     return res.choices?.[0]?.message?.content?.trim() ?? '';
   } catch (err) {
+    // Log any errors but don’t crash the app
     console.error('OpenAI error:', err);
     return '';
   }

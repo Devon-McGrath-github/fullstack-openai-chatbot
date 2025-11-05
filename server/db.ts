@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3';
-import { randomUUID } from 'crypto';
+import {randomUUID} from 'crypto';
 
+// Basic types for messages and roles
 export type Role = 'system' | 'user' | 'assistant';
 export type MessageRow = {
   id: string;
@@ -10,9 +11,11 @@ export type MessageRow = {
   createdAt: number;
 };
 
+// Create or open the local SQLite database
 const db = new Database('chat.db');
-db.pragma('journal_mode = WAL');
+db.pragma('journal_mode = WAL'); // helps with performance and reliability
 
+// Set up the database tables if they don’t exist yet
 db.exec(`
   CREATE TABLE IF NOT EXISTS conversations (
     id TEXT PRIMARY KEY,
@@ -30,6 +33,7 @@ db.exec(`
   );
 `);
 
+// Pre-build SQL statements for speed and cleaner code
 const insertConversation = db.prepare(`
   INSERT INTO conversations (id, title, createdAt, updatedAt) VALUES (?, ?, ?, ?)
 `);
@@ -45,6 +49,7 @@ const listMessages = db.prepare(`
   FROM messages WHERE conversationId = ? ORDER BY createdAt ASC
 `);
 
+// Create a new conversation if one doesn't already exist
 export function ensureConversation(conversationId?: string): string {
   if (conversationId) return conversationId;
   const id = randomUUID();
@@ -53,14 +58,20 @@ export function ensureConversation(conversationId?: string): string {
   return id;
 }
 
-export function addMessage(conversationId: string, role: Role, content: string): MessageRow {
+// Add a new message and update the conversation’s timestamp
+export function addMessage(
+  conversationId: string,
+  role: Role,
+  content: string
+): MessageRow {
   const id = crypto.randomUUID();
   const createdAt = Date.now();
   insertMessage.run(id, conversationId, role, content, createdAt);
   touchConversation.run(createdAt, conversationId);
-  return { id, conversationId, role, content, createdAt };
+  return {id, conversationId, role, content, createdAt};
 }
 
+// Get all messages for a given conversation
 export function getMessages(conversationId: string): MessageRow[] {
   return listMessages.all(conversationId) as MessageRow[];
 }

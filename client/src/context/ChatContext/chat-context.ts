@@ -1,12 +1,14 @@
 import {createContext} from 'react';
 
+// Defines what a single chat message looks like
 export type ChatMessage = {
-  id: string; 
+  id: string;
   role: 'user' | 'assistant';
   content: string;
   createdAt: number;
 };
 
+// Lists what data and functions the chat context will provide
 export type ChatContextType = {
   messages: ChatMessage[];
   replaceMessages: (msgs: ChatMessage[]) => void;
@@ -14,5 +16,7 @@ export type ChatContextType = {
   addUser: (content: string) => void;
 };
 
-
-export const ChatContext = createContext<ChatContextType | undefined>(undefined);
+// Creates the actual chat context so other parts of the app can use it
+export const ChatContext = createContext<ChatContextType | undefined>(
+  undefined
+);
