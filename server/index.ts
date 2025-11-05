@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json({limit: '1mb'}));
 app.use(cors({origin: '*'}));
 
-// simple request logger
+// Request logger
 app.use((req: Request, _res: Response, next) => {
   console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
   next();

@@ -8,7 +8,7 @@ type GenerateResponse = {
 export default function App() {
   const [userPrompt, setUserPrompt] = useState<string>('');
   const [gptQuery, setGptQuery] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false); // added
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,7 +64,7 @@ export default function App() {
           {loading ? (
             <span className={styles.spinner} aria-hidden="true" />
           ) : (
-            'Generate query'
+            'Ask Anything'
           )}
         </button>
       </form>

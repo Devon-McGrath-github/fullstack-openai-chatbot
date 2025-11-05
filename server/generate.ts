@@ -1,4 +1,3 @@
-// generate.ts
 import openai from './api';
 
 type Role = 'system' | 'user' | 'assistant';
@@ -12,7 +11,7 @@ export type GenerateOptions = {
   signal?: AbortSignal;
 };
 
-/* Generate a natural-language answer from OpenAI. */
+// Generate a natural-language answer from OpenAI.
 export default async function generate(
   queryDescription: string,
   {
@@ -22,9 +21,9 @@ export default async function generate(
     maxTokens = 512,
   }: GenerateOptions = {}
 ): Promise<string> {
-  
   if (!queryDescription?.trim()) return '';
 
+  // Context for the conversation
   const messages: ChatMessage[] = [
     {role: 'system', content: system},
     {role: 'user', content: queryDescription.trim()},
