@@ -1,4 +1,4 @@
-# ChatGPT Query Assistant
+# Fullstack LLM Application
 
 A **full-stack web application** that lets users ask questions in plain English and get intelligent, conversational answers powered by OpenAI’s ChatGPT API.
 

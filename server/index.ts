@@ -20,7 +20,7 @@ app.get('/', (_req: Request, res: Response) => {
 });
 
 app.post('/generate', async (req: Request, res: Response) => {
-  const { queryDescription } = req.body ?? {};
+  const {queryDescription} = req.body ?? {};
   if (typeof queryDescription !== 'string' || !queryDescription.trim()) {
     return res.status(400).json({error: 'queryDescription is required'});
   }
@@ -35,6 +35,7 @@ app.post('/generate', async (req: Request, res: Response) => {
 });
 
 const port = Number(process.env.PORT) || 3002;
+
 const server = app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
