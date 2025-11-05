@@ -6,16 +6,13 @@ export default function ChatOutput() {
 
   return (
     <div className={styles.outputContainer}>
-      {messages.map((message) => (
+      {messages.map((m) => (
         <div
-          key={message.id}
-          className={`${styles.message} ${
-            // message.id % 2 === 0 ? styles.assistant : styles.user
-            styles.assistant
-          }`}
+          key={m.id}
+          className={`${styles.message} ${m.role === 'assistant' ? styles.assistant : styles.user}`}
           aria-live="polite"
         >
-          <p>{message.content}</p>
+          <p>{m.content}</p>
         </div>
       ))}
     </div>

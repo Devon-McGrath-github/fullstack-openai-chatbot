@@ -1,11 +1,18 @@
 import {createContext} from 'react';
 
-export type ChatMessage = {id: number; content: string};
-export type ChatContextType = {
-  messages: ChatMessage[];
-  addMessage: (message: string) => void;
+export type ChatMessage = {
+  id: string; 
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt: number;
 };
 
-export const ChatContext = createContext<ChatContextType | undefined>(
-  undefined
-);
+export type ChatContextType = {
+  messages: ChatMessage[];
+  replaceMessages: (msgs: ChatMessage[]) => void;
+  addAssistant: (content: string) => void;
+  addUser: (content: string) => void;
+};
+
+
+export const ChatContext = createContext<ChatContextType | undefined>(undefined);
