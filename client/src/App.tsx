@@ -1,30 +1,32 @@
-import {useState, type ChangeEvent, type FormEvent} from 'react';
+import {useState} from 'react';
+import ChatInput from './components/ChatInput/ChatInput';
+import ChatOutput from './components/ChatOutput/ChatOutput';
 import styles from './styles.module.css';
+import {useChat} from './hooks/useChat';
+import { ChatProvider } from './context/ChatContext';
 
 type GenerateResponse = {
   query: string;
 };
 
-export default function App() {
-  const [userPrompt, setUserPrompt] = useState<string>('');
-  const [gptQuery, setGptQuery] = useState<string>('');
+const AppContent = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const {addMessage} = useChat();
 
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = async (userPrompt: string) => {
     setLoading(true);
     try {
-      const query = await generateQuery();
-      setGptQuery(query);
+      const query = await generateQuery(userPrompt);
+      addMessage(query);
     } catch (err) {
       console.error(err);
-      setGptQuery('Error generating query');
+      addMessage('Error generating query');
     } finally {
       setLoading(false);
     }
   };
 
-  const generateQuery = async (): Promise<string> => {
+  const generateQuery = async (userPrompt: string): Promise<string> => {
     const res = await fetch('http://localhost:3002/generate', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -39,36 +41,28 @@ export default function App() {
     return (data.query ?? '').trim();
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserPrompt(e.target.value);
-  };
-
   return (
     <main className={styles.main}>
       <h3>GPT</h3>
-      <form onSubmit={onSubmit}>
-        <input
-          type="text"
-          name="query-description"
-          placeholder="Describe your query"
-          value={userPrompt}
-          onChange={handleChange}
-          disabled={loading}
-        />
-        <button
-          type="submit"
-          className={styles.submitButton}
-          disabled={loading}
-          aria-busy={loading}
-        >
-          {loading ? (
-            <span className={styles.spinner} aria-hidden="true" />
-          ) : (
-            'Ask Anything'
-          )}
-        </button>
-      </form>
-      <pre aria-live="polite">{gptQuery}</pre>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          marginBottom: '16px',
+        }}
+      >
+        <ChatOutput />
+        <ChatInput onSubmit={onSubmit} loading={loading} />
+      </div>
     </main>
+  );
+};
+
+export default function App() {
+  return (
+    <ChatProvider>
+      <AppContent />
+    </ChatProvider>
   );
 }
