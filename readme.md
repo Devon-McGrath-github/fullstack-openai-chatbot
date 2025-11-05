@@ -61,5 +61,5 @@ pnpm run dev
 
 This runs both:
 
-- client on http://localhost:5173
-- server on http://localhost:3002
+- client on <http://localhost:5173>
+- server on <http://localhost:3002>
