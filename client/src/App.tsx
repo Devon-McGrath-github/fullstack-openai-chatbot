@@ -1,9 +1,9 @@
 import {useState} from 'react';
 import ChatInput from './components/ChatInput/ChatInput';
 import ChatOutput from './components/ChatOutput/ChatOutput';
-import styles from './styles.module.css';
 import {useChat} from './hooks/useChat';
-import { ChatProvider } from './context/ChatContext';
+import {ChatProvider} from './context/ChatContext';
+import './App.css';
 
 type GenerateResponse = {
   query: string;
@@ -42,14 +42,13 @@ const AppContent = () => {
   };
 
   return (
-    <main className={styles.main}>
+    <main>
       <h3>GPT</h3>
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
-          marginBottom: '16px',
         }}
       >
         <ChatOutput />
