@@ -11,7 +11,7 @@ export type GenerateOptions = {
   signal?: AbortSignal;
 };
 
-// Generate a natural-language answer from OpenAI.
+// Generate answer from OpenAI.
 export default async function generate(
   queryDescription: string,
   {
@@ -30,14 +30,14 @@ export default async function generate(
   ];
 
   try {
-    const res = await openai.createChatCompletion({
+    const res = await openai.chat.completions.create({
       model,
       messages,
       temperature,
       max_tokens: maxTokens,
     });
 
-    return res.data.choices?.[0]?.message?.content?.trim() ?? '';
+    return res.choices?.[0]?.message?.content?.trim() ?? '';
   } catch (err) {
     console.error('OpenAI error:', err);
     return '';
