@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "pnpm -r --parallel run dev"
+    "dev": "concurrently -k \"pnpm --filter ./server run dev\" \"pnpm --filter ./client run dev\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
