@@ -3,6 +3,7 @@ import cors from 'cors';
 import type {Request, Response} from 'express';
 
 import generate from './generate.ts';
+import {ensureConversation, addMessage, getMessages} from './db.ts'; // 🆕 import
 
 const app = express();
 
@@ -19,15 +20,33 @@ app.get('/', (_req: Request, res: Response) => {
   res.send('Server Running');
 });
 
+app.get('/conversations/:id/messages', (req: Request, res: Response) => {
+  try {
+    const messages = getMessages(req.params.id);
+    return res.json({messages});
+  } catch (error) {
+    console.error('History error:', error);
+    return res.status(500).json({error: 'Internal Server Error'});
+  }
+});
+
 app.post('/generate', async (req: Request, res: Response) => {
-  const {queryDescription} = req.body ?? {};
+  const {queryDescription, conversationId: inputId} = req.body ?? {};
   if (typeof queryDescription !== 'string' || !queryDescription.trim()) {
     return res.status(400).json({error: 'queryDescription is required'});
   }
 
+  const conversationId = ensureConversation(inputId);
+
   try {
-    const query = await generate(queryDescription);
-    return res.json({query});
+    addMessage(conversationId, 'user', queryDescription.trim());
+
+    const reply = await generate(queryDescription);
+
+    const saved = addMessage(conversationId, 'assistant', reply || '');
+
+    // return both the id (so client can store it) and the reply
+    return res.json({conversationId, reply: saved.content, message: saved});
   } catch (error) {
     console.error('Generate error:', error);
     return res.status(500).json({error: 'Internal Server Error'});
