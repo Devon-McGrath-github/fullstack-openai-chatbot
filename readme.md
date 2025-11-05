@@ -32,34 +32,34 @@ Built with **React (Vite)** on the frontend and **Node.js + Express** on the bac
 
 ### 1. Clone the repository
 
-<pre> ```bash  
+```bash
 git clone https://github.com/YOUR-USERNAME/chat-assistant.git
-``` </pre>
+```
 
 ### 2. Install dependencies
 
-<pre> ```bash  
+```bash
 pnpm install
-``` </pre>
+```
 
 ### 3. Configure environment variables
 
 Create a .env file inside the /server folder:
 
-<pre> ```bash
+```bash
 OPENAI_API_KEY=your_openai_api_key_here
 PORT=3002
-``` </pre>
+```
 
 ### 4. Start the development servers
 
 From the project root:
 
-<pre> ```bash
+```bash
 pnpm run dev
-``` </pre>
+```
 
 This runs both:
 
-client on http://localhost:5173
-server on http://localhost:3002
+- client on http://localhost:5173
+- server on http://localhost:3002
