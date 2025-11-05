@@ -43,7 +43,7 @@ const AppContent = () => {
 
   return (
     <main>
-      <h2>OpenAI Query Interface</h2>
+      <h2 style={{padding: '1rem 0'}}>OpenAI Query Interface</h2>
       <div className="appInner">
         <ChatOutput />
         <ChatInput onSubmit={onSubmit} loading={loading} />
