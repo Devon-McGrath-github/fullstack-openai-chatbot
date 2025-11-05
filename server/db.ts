@@ -12,10 +12,10 @@ export type MessageRow = {
 
 // Create or open the local SQLite database
 const db = new Database('chat.db');
-db.pragma('foreign_keys = ON'); // enforce FKs
-db.pragma('journal_mode = WAL'); // good perf/reliability
+db.pragma('foreign_keys = ON'); // turn on FK enforcement
+db.pragma('journal_mode = WAL'); // turn on Write-Ahead Logging (concurrency + crash resilience)
 
-// Schema
+// DB Schema
 db.exec(`
   CREATE TABLE IF NOT EXISTS conversations (
     id TEXT PRIMARY KEY,
@@ -33,7 +33,7 @@ db.exec(`
   );
 `);
 
-// Statements
+// Prepared statements for common queries
 const upsertConversation = db.prepare(`
   INSERT OR IGNORE INTO conversations (id, title, createdAt, updatedAt)
   VALUES (?, NULL, ?, ?)

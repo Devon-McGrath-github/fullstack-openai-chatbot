@@ -2,7 +2,7 @@ import {useContext} from 'react';
 import {ChatContext} from '../context/ChatContext/chat-context';
 
 export function useChat() {
-  const ctx = useContext(ChatContext);
-  if (!ctx) throw new Error('useChat must be used within ChatProvider');
-  return ctx;
+  const context = useContext(ChatContext);
+  if (!context) throw new Error('useChat must be used within ChatProvider');
+  return context;
 }
