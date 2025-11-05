@@ -36,6 +36,8 @@
 }
 
 main {
+  height: 100vh;
+  max-height: 100vh;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -69,4 +71,15 @@ a:hover {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+.appInner {
+  width: 100%;
+  max-width: var(--app-max-width);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 0%;
+  min-height: 0; /* allow child overflow to work */
+  box-sizing: border-box;
 }
