@@ -1,4 +1,4 @@
-import {useState, type ChangeEvent, type FormEvent, useEffect} from 'react';
+import {useState, type ChangeEvent, type FormEvent} from 'react';
 import styles from './styles.module.css';
 
 type GenerateResponse = {
@@ -13,7 +13,6 @@ export default function App() {
     e.preventDefault();
     const query = await generateQuery();
     setGptQuery(query);
-    console.log('Generated query (from submit):', query);
   };
 
   const generateQuery = async (): Promise<string> => {
@@ -28,18 +27,12 @@ export default function App() {
     }
 
     const data: GenerateResponse = await res.json();
-    console.log('Response from server:', data);
     return (data.query ?? '').trim();
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUserPrompt(e.target.value);
   };
-
-  // If you want to see state updates reliably:
-  useEffect(() => {
-    if (gptQuery) console.log('GPT Query state changed:', gptQuery);
-  }, [gptQuery]);
 
   return (
     <main className={styles.main}>
