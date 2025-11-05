@@ -8,11 +8,20 @@ type GenerateResponse = {
 export default function App() {
   const [userPrompt, setUserPrompt] = useState<string>('');
   const [gptQuery, setGptQuery] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false); // added
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const query = await generateQuery();
-    setGptQuery(query);
+    setLoading(true);
+    try {
+      const query = await generateQuery();
+      setGptQuery(query);
+    } catch (err) {
+      console.error(err);
+      setGptQuery('Error generating query');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const generateQuery = async (): Promise<string> => {
@@ -44,10 +53,22 @@ export default function App() {
           placeholder="Describe your query"
           value={userPrompt}
           onChange={handleChange}
+          disabled={loading}
         />
-        <input type="submit" value="Generate query" />
+        <button
+          type="submit"
+          className={styles.submitButton}
+          disabled={loading}
+          aria-busy={loading}
+        >
+          {loading ? (
+            <span className={styles.spinner} aria-hidden="true" />
+          ) : (
+            'Generate query'
+          )}
+        </button>
       </form>
-      <p>{gptQuery}</p>
+      <pre aria-live="polite">{gptQuery}</pre>
     </main>
   );
 }
