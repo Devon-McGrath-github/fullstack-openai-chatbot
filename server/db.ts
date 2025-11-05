@@ -1,7 +1,6 @@
 import Database from 'better-sqlite3';
 import {randomUUID} from 'crypto';
 
-// Basic types for messages and roles
 export type Role = 'system' | 'user' | 'assistant';
 export type MessageRow = {
   id: string;
@@ -13,9 +12,10 @@ export type MessageRow = {
 
 // Create or open the local SQLite database
 const db = new Database('chat.db');
-db.pragma('journal_mode = WAL'); // helps with performance and reliability
+db.pragma('foreign_keys = ON'); // enforce FKs
+db.pragma('journal_mode = WAL'); // good perf/reliability
 
-// Set up the database tables if they don’t exist yet
+// Schema
 db.exec(`
   CREATE TABLE IF NOT EXISTS conversations (
     id TEXT PRIMARY KEY,
@@ -33,45 +33,53 @@ db.exec(`
   );
 `);
 
-// Pre-build SQL statements for speed and cleaner code
-const insertConversation = db.prepare(`
-  INSERT INTO conversations (id, title, createdAt, updatedAt) VALUES (?, ?, ?, ?)
+// Statements
+const upsertConversation = db.prepare(`
+  INSERT OR IGNORE INTO conversations (id, title, createdAt, updatedAt)
+  VALUES (?, NULL, ?, ?)
 `);
+
 const touchConversation = db.prepare(`
   UPDATE conversations SET updatedAt = ? WHERE id = ?
 `);
+
 const insertMessage = db.prepare(`
   INSERT INTO messages (id, conversationId, role, content, createdAt)
   VALUES (?, ?, ?, ?, ?)
 `);
+
 const listMessages = db.prepare(`
   SELECT id, conversationId, role, content, createdAt
   FROM messages WHERE conversationId = ? ORDER BY createdAt ASC
 `);
 
-// Create a new conversation if one doesn't already exist
+// Create conversation if missing
 export function ensureConversation(conversationId?: string): string {
-  if (conversationId) return conversationId;
-  const id = randomUUID();
   const now = Date.now();
-  insertConversation.run(id, null, now, now);
+  // If it exists, IGNORE. If not, create it.
+  const id = conversationId ?? randomUUID();
+  upsertConversation.run(id, now, now);
   return id;
 }
 
-// Add a new message and update the conversation’s timestamp
 export function addMessage(
   conversationId: string,
   role: Role,
   content: string
 ): MessageRow {
-  const id = crypto.randomUUID();
+  const id = randomUUID();
   const createdAt = Date.now();
-  insertMessage.run(id, conversationId, role, content, createdAt);
-  touchConversation.run(createdAt, conversationId);
+
+  // Insert message and bump conversation timestamp in a small transaction
+  const tx = db.transaction(() => {
+    insertMessage.run(id, conversationId, role, content, createdAt);
+    touchConversation.run(createdAt, conversationId);
+  });
+  tx();
+
   return {id, conversationId, role, content, createdAt};
 }
 
-// Get all messages for a given conversation
 export function getMessages(conversationId: string): MessageRow[] {
   return listMessages.all(conversationId) as MessageRow[];
 }
