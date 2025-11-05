@@ -1,4 +1,4 @@
-import openaiClient from './api.js'; // keep .js if your api file isn’t converted yet
+import openaiClient from './api.ts';
 
 // Define the shape of a chat message
 interface ChatMessage {
@@ -10,17 +10,18 @@ interface ChatMessage {
 export default async function generate(
   queryDescription: string
 ): Promise<string> {
-  const daVinci = async (
-    queryDescription: string
-  ): Promise<string | undefined> => {
-    const response = await openaiClient.createCompletion({
-      model: 'text-davinci-003',
-      prompt: `Convert the following natural language description into a SQL query:\n\n${queryDescription}`,
-      max_tokens: 100,
-      temperature: 0,
-    });
-    return response.data.choices[0]?.text?.trim();
-  };
+  // Example of using a different model (commented out)
+  // const gptNano = async (
+  //   queryDescription: string
+  // ): Promise<string | undefined> => {
+  //   const response = await openaiClient.createCompletion({
+  //     model: 'gpt-5-nano',
+  //     prompt: `Answer questions as quickly as possible with natural language. \n\n${queryDescription}.`,
+  //     max_tokens: 100,
+  //     temperature: 0,
+  //   });
+  //   return response.data.choices[0]?.text?.trim();
+  // };
 
   const chatGPT = async (
     queryDescription: string
@@ -28,17 +29,16 @@ export default async function generate(
     const messages: ChatMessage[] = [
       {
         role: 'system',
-        content: 'You are a translator from plain English to SQL.',
+        content: 'You are an assistant that helpfully answers questions.',
       },
       {
         role: 'user',
-        content:
-          'Convert the following natural language description into a SQL query:\n\nShow all all the elements in the table users',
+        content: 'Answer the following question:',
       },
       {role: 'assistant', content: 'SELECT * FROM users;'},
       {
         role: 'user',
-        content: `Convert the following natural language description into a SQL query:\n\n${queryDescription}`,
+        content: `Answer the following question:\n\n${queryDescription}`,
       },
     ];
 
