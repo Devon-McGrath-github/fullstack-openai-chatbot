@@ -43,12 +43,13 @@ const AppContent = () => {
 
   return (
     <main>
-      <h2>ChatGPT</h2>
+      <h2>OpenAI Query Interface</h2>
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
+          width: '100%',
         }}
       >
         <ChatOutput />
