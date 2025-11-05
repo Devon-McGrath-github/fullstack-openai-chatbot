@@ -23,6 +23,13 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# SQLite (better-sqlite3) artifacts
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
 # Editor and system files
 .DS_Store
 Thumbs.db
